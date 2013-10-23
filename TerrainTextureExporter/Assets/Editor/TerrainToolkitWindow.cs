@@ -11,9 +11,9 @@ public class TerrainToolkitWindow : EditorWindow
     private Dictionary<Vector3, IEnumerable<float>> _textureInfo;
 
     private readonly TerrainTextureToolkit _textureToolkit = new TerrainTextureToolkit
-                                                              {
-                                                                  Terrain = Terrain.activeTerrain
-                                                              };
+                                                             {
+                                                                 Terrain = Terrain.activeTerrain
+                                                             };
 
     // Add menu item named "My Window" to the Window menu
     [MenuItem("Window/Terrain Toolkit")]
@@ -36,8 +36,7 @@ public class TerrainToolkitWindow : EditorWindow
 
             TextureInputPath = EditorGUILayout.TextField("Input Directory", TextureInputPath);
 
-            SimpleButtonHandler("Import Texture Info", () =>  _textureToolkit.LoadTexturesFromFile(TextureInputPath));
-
+            SimpleButtonHandler("Import Texture Info", () => _textureToolkit.LoadTexturesFromFile(TextureInputPath));
         } catch (Exception e)
         {
             Debug.Log("something happened: " + e);
