@@ -10,11 +10,7 @@ public class TextureData
     {
         var oldExponent = Math.Log(ControlTextureResolution, 2);
 
-        TerrainToolkitWindow.Log("old exponent = " + oldExponent);
-
         var newExponent = Math.Log(newResolution, 2);
-
-        TerrainToolkitWindow.Log("new exponent = " + newExponent);
 
         if (newExponent > oldExponent)
         {
@@ -39,7 +35,7 @@ public class TextureData
         {
             for (var z = 0; z < newSecondCount; z++)
             {
-// ReSharper disable SuggestUseVarKeywordEverywhere
+// ReSharper disable SuggestUseVarKeywordEverywhere -- we want to be clear this is an integer division and we want a compile error if that changes. 
                 int origX = x / splatmapSizeModifier;
                 int origZ = z / splatmapSizeModifier;
 // ReSharper restore SuggestUseVarKeywordEverywhere

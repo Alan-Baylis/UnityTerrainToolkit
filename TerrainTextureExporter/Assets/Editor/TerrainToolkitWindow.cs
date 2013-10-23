@@ -1,17 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 
 public class TerrainToolkitWindow : EditorWindow
 {
-    public string TextureOutputPath { get; set; }
-    public string TextureInputPath { get; set; }
-
-    private Dictionary<Vector3, IEnumerable<float>> _textureInfo;
-
-    private TerrainTextureToolkit _textureToolkit;
-
+    public string NewControlTextureResolution { get; set; }
 
     // Add menu item named "My Window" to the Window menu
     [MenuItem("Window/Terrain Toolkit")]
@@ -25,25 +18,33 @@ public class TerrainToolkitWindow : EditorWindow
     {
         try
         {
-            _textureToolkit = new TerrainTextureToolkit
-                              {
-                                  Terrain = Terrain.activeTerrain
-                              };
-
             GUILayout.Label("Texture Exporter", EditorStyles.boldLabel);
-            TextureOutputPath = EditorGUILayout.TextField("Output Directory", TextureOutputPath);
 
-            SimpleButtonHandler("Export Texture Info", () => TextureInputPath = _textureToolkit.SerializeTexturesToFile(TextureOutputPath));
+            NewControlTextureResolution = EditorGUILayout.TextField("New Control Texture Resolution", NewControlTextureResolution);
 
-            GUILayout.Label("Texture Importer", EditorStyles.boldLabel);
-
-            TextureInputPath = EditorGUILayout.TextField("Input Directory", TextureInputPath);
-
-            SimpleButtonHandler("Import Texture Info", () => _textureToolkit.LoadTexturesFromFile(TextureInputPath));
+            SimpleButtonHandler("Change", () => ChangeResolution(NewControlTextureResolution));
         } catch (Exception e)
         {
             Debug.Log("something happened: " + e);
         }
+    }
+
+    private static void ChangeResolution(string newControlTextureResolution)
+    {
+        if (Terrain.activeTerrain == null)
+        {
+            Debug.Log("No active terrain");
+            return;
+        }
+
+        int newTextureResolution;
+        if (!int.TryParse(newControlTextureResolution, out newTextureResolution))
+        {
+            Debug.Log("New Control Texture Resolution must be an int");
+            return;
+        }
+
+        TerrainTextureToolkit.UpdateControlTextureResolution(Terrain.activeTerrain.terrainData, newTextureResolution);
     }
 
     private static void SimpleButtonHandler(string exportTextureInfo, Action action)
@@ -52,10 +53,5 @@ public class TerrainToolkitWindow : EditorWindow
         {
             action();
         }
-    }
-
-    public static void Log(object message)
-    {
-        Debug.Log(message);
     }
 }
