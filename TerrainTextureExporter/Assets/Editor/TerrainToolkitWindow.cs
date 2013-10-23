@@ -10,10 +10,8 @@ public class TerrainToolkitWindow : EditorWindow
 
     private Dictionary<Vector3, IEnumerable<float>> _textureInfo;
 
-    private readonly TerrainTextureToolkit _textureToolkit = new TerrainTextureToolkit
-                                                             {
-                                                                 Terrain = Terrain.activeTerrain
-                                                             };
+    private TerrainTextureToolkit _textureToolkit;
+
 
     // Add menu item named "My Window" to the Window menu
     [MenuItem("Window/Terrain Toolkit")]
@@ -27,6 +25,11 @@ public class TerrainToolkitWindow : EditorWindow
     {
         try
         {
+            _textureToolkit = new TerrainTextureToolkit
+                              {
+                                  Terrain = Terrain.activeTerrain
+                              };
+
             GUILayout.Label("Texture Exporter", EditorStyles.boldLabel);
             TextureOutputPath = EditorGUILayout.TextField("Output Directory", TextureOutputPath);
 
@@ -49,5 +52,10 @@ public class TerrainToolkitWindow : EditorWindow
         {
             action();
         }
+    }
+
+    public static void Log(object message)
+    {
+        Debug.Log(message);
     }
 }

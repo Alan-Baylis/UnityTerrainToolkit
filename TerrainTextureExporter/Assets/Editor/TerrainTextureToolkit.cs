@@ -30,12 +30,16 @@ public class TerrainTextureToolkit
         return filePath;
     }
 
-    private float[,,] GetTextureMixes()
+    private TextureData GetTextureMixes()
     {
         var terrainData = Terrain.terrainData;
 
         // get the splat data for this cell as a 1x1xN 3d array (where N = number of textures)
-        return terrainData.GetAlphamaps(0, 0, terrainData.alphamapWidth, terrainData.alphamapHeight);
+        return new TextureData
+               {
+                   SplatMaps = terrainData.GetAlphamaps(0, 0, terrainData.alphamapWidth, terrainData.alphamapHeight),
+                   ControlTextureResolution = terrainData.alphamapResolution
+               };
     }
 
     private static string CreateFilePath(string outputDirectory)
@@ -48,7 +52,7 @@ public class TerrainTextureToolkit
         return Path.Combine(outputDirectory, Guid.NewGuid().ToString());
     }
 
-    private static void Serialize(string filePath, float[,,] data)
+    private static void Serialize(string filePath, TextureData data)
     {
         using (var fs = File.Create(filePath))
         {
@@ -57,20 +61,25 @@ public class TerrainTextureToolkit
         }
     }
 
-    private float[,,] Deserialize(string filePath)
+    private static TextureData Deserialize(string filePath)
     {
         using (var fs = File.Open(filePath, FileMode.Open))
         {
             var deserializer = new BinaryFormatter();
-            return (float[,,]) deserializer.Deserialize(fs);
+            return (TextureData) deserializer.Deserialize(fs);
         }
     }
 
-    private void ApplyMixesToTerrain(float[,,] data)
+    private void ApplyMixesToTerrain(TextureData data)
     {
         var terrainData = Terrain.terrainData;
 
+        if (data.ControlTextureResolution != terrainData.alphamapResolution)
+        {
+            data.AdjustSplatMapResolution(terrainData.alphamapResolution);
+        }
+
         // get the splat data for this cell as a 1x1xN 3d array (where N = number of textures)
-        terrainData.SetAlphamaps(0, 0, data);
+        terrainData.SetAlphamaps(0, 0, data.SplatMaps);
     }
 }
