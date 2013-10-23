@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 using UnityEditor;
 using UnityEngine;
 
@@ -25,11 +26,11 @@ public class TerrainToolkitWindow : EditorWindow
             SimpleButtonHandler("Change", () => ChangeResolution(NewControlTextureResolution));
         } catch (Exception e)
         {
-            Debug.Log("something happened: " + e);
+            Debug.Log(e);
         }
     }
 
-    private static void ChangeResolution(string newControlTextureResolution)
+    private void ChangeResolution(string newControlTextureResolution)
     {
         if (Terrain.activeTerrain == null)
         {
@@ -37,14 +38,20 @@ public class TerrainToolkitWindow : EditorWindow
             return;
         }
 
-        int newTextureResolution;
-        if (!int.TryParse(newControlTextureResolution, out newTextureResolution))
+        int newResolution;
+        if (!int.TryParse(newControlTextureResolution, out newResolution))
         {
             Debug.Log("New Control Texture Resolution must be an int");
             return;
         }
+        var power = Math.Log(newResolution, 2);
+        newResolution = (int) Math.Pow(2, Math.Round(power));
+        newResolution = Math.Min(newResolution, 2048);
+        newResolution = Math.Max(newResolution, 16);
 
-        TerrainTextureToolkit.UpdateControlTextureResolution(Terrain.activeTerrain.terrainData, newTextureResolution);
+        NewControlTextureResolution = newResolution.ToString(CultureInfo.InvariantCulture);
+
+        TerrainTextureToolkit.UpdateControlTextureResolution(Terrain.activeTerrain.terrainData, newResolution);
     }
 
     private static void SimpleButtonHandler(string exportTextureInfo, Action action)

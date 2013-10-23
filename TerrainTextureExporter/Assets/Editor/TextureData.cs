@@ -8,21 +8,20 @@ public class TextureData
 
     public void AdjustSplatMapResolution(int newResolution)
     {
-        var oldExponent = Math.Log(ControlTextureResolution, 2);
+        var oldExponent = (int)Math.Log(ControlTextureResolution, 2);
 
-        var newExponent = Math.Log(newResolution, 2);
+        var newExponent = (int)Math.Log(newResolution, 2);
 
         if (newExponent > oldExponent)
         {
-            ExpandSplatMaps(newExponent, oldExponent);
+            ExpandSplatMaps(newExponent - oldExponent);
         }
 
         ControlTextureResolution = newResolution;
     }
 
-    private void ExpandSplatMaps(double newExponent, double oldExponent)
+    private void ExpandSplatMaps(int delta)
     {
-        var delta = newExponent - oldExponent;
         var splatmapSizeModifier = (int) (Math.Pow(2, delta));
 
         var newFirstCount = (SplatMaps.GetUpperBound(0) + 1) * splatmapSizeModifier;
